@@ -8,6 +8,11 @@ var canvas;
 var palyer, playerBase;
 var computer, computerBase;
 
+//Declare an array for arrows playerArrows = [ ]
+var playerArrows = [];
+
+var arrow;
+
 
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight);
@@ -16,8 +21,13 @@ function setup() {
   world = engine.world;
 
   playerBase = new PlayerBase(300, random(450, height - 300), 180, 150);
-//create a player object from the Player class.
-  Player= new Player(playerBase.body.position.x,playerBase.body.position.y-150,50,180)
+  player = new Player(285, playerBase.body.position.y - 153, 50, 180);
+  playerArcher = new PlayerArcher(
+    340,
+    playerBase.body.position.y - 180,
+    120,
+    120
+  );
 
   computerBase = new ComputerBase(
     width - 300,
@@ -31,12 +41,20 @@ function setup() {
     50,
     180
   );
-
+  computerArcher = new ComputerArcher(
+    width - 340,
+    computerBase.body.position.y - 180,
+    120,
+    120
+  );
   
+ 
+
+
 }
 
 function draw() {
-  background(189);
+  background(180);
 
   Engine.update(engine);
 
@@ -48,11 +66,65 @@ function draw() {
 
  
   playerBase.display();
-//call the display() function for the player object.
+  player.display();
   
-  Player.display();
+
   computerBase.display();
   computer.display();
   
+  playerArcher.display();
+  computerArcher.display()
+
+ 
+ for (var i=0; i<playerArrows.length; i++) 
+ {
+ showArrows(i, playerArrows);
+ }
+
+
+
+
+
+
+}
+
+/*********** Choose correct keyPressed() function out of these *************/
+
+function keyPressed() {
+  if(keyCode === 32){
+    // create an arrow object and add into an array ; set its angle same as angle of playerArcher
+    var posX = playerArcher.body.position.x;
+    var posY = playerArcher.body.position.y;
+    var angle = playerArcher.body.angle;
+    var arrow = new PlayerArrow(posX, posY, 100, 10);
+    arrow.trajectory = [];
+    Matter.Body.setAngle(arrow.body,angle);
+    playerArrows.push(arrow);
+  }
+}
+
+
+
+
+
+
+function keyReleased () {
+
+  if(keyCode === 32){
+    //call shoot() function for each arrow in an array playerArrows
+    if (playerArrows.length) {
+      var angle = playerArcher.body.angle+PI/2;
+      playerArrows[playerArrows.length - 1].shoot(angle);
+    }
+  }
+
+}
+//Display arrow and Tranjectory
+function showArrows(index, arrows) {
+  arrows[index].display();
+  
+    
+  
+ 
 
 }
